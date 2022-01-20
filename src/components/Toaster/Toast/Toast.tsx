@@ -66,10 +66,7 @@ interface UseCloseOnTimeoutProps {
     timeout?: number;
 }
 
-function useCloseOnTimeout({onClose, timeout}: UseCloseOnTimeoutProps): {
-    onMouseLeave: VoidFunction;
-    onMouseOver: VoidFunction;
-} {
+function useCloseOnTimeout({onClose, timeout}: UseCloseOnTimeoutProps) {
     const timerId = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
     const setTimer = React.useCallback(() => {
@@ -108,13 +105,15 @@ function useCloseOnTimeout({onClose, timeout}: UseCloseOnTimeoutProps): {
 }
 
 interface UseHeightProps {
-    ref: React.RefObject<HTMLDivElement>;
     isOverride: boolean;
+    status: ToastStatus;
 }
 
-function useHeight({ref, isOverride}: UseHeightProps) {
+function useToastHeight({isOverride, status}: UseHeightProps) {
     const [height, setHeight] = React.useState<number | undefined>(undefined);
 
+    const ref = React.useRef<HTMLDivElement>(null);
+    const style: ToastStyles = {};
     const getToastHeight = React.useCallback(() => {
         return ref.current?.offsetHeight;
     }, [ref]);
@@ -129,7 +128,11 @@ function useHeight({ref, isOverride}: UseHeightProps) {
         }
     }, [isOverride, getToastHeight]);
 
-    return height;
+    if (height && status !== ToastStatus.showingIndents && status !== ToastStatus.shown) {
+        style.height = height;
+    }
+
+    return {style, ref};
 }
 
 interface UseToastStatusProps {
@@ -215,74 +218,48 @@ function renderIcon({type}: RenderIconProps) {
 }
 
 export function Toast(props: ToastProps) {
-    const ref = React.useRef<HTMLDivElement>(null);
-
     const {allowAutoHiding = true, isClosable = true, isOverride = false} = props;
 
     const {
         status,
-        containerProps: {onAnimationEnd},
+        containerProps: statusProps,
         handleClose,
     } = useToastStatus({onRemove: props.removeCallback});
 
-    const height = useHeight({ref, isOverride});
+    const heightProps = useToastHeight({isOverride, status});
 
-    const containerProps = useCloseOnTimeout({
-        onClose: handleClose,
-        timeout: allowAutoHiding ? props.timeout || DEFAULT_TIMEOUT : undefined,
-    });
-
-    const getStyles = () => {
-        const styles: ToastStyles = {};
-
-        if (height && status !== ToastStatus.showingIndents && status !== ToastStatus.shown) {
-            styles.height = height;
-        }
-
-        if (status !== 'creating') {
-            styles.position = 'relative';
-        }
-
-        return styles;
-    };
+    const timeout = allowAutoHiding ? props.timeout || DEFAULT_TIMEOUT : undefined;
+    const closeOnTimeoutProps = useCloseOnTimeout({onClose: handleClose, timeout});
 
     const mods = {
         appearing: status === ToastStatus.showingIndents || status === ToastStatus.showingHeight,
         'show-animation': status === ToastStatus.showingHeight,
         'hide-animation': status === ToastStatus.hiding,
-    };
-
-    const getCloseButton = () => {
-        if (!isClosable) {
-            return null;
-        }
-
-        return (
-            <Button
-                view="flat-secondary"
-                size="s"
-                style={{position: 'absolute', top: 10, right: 10}}
-                onClick={handleClose}
-            >
-                <Icon data={CrossIcon} />
-            </Button>
-        );
+        created: status !== ToastStatus.creating,
     };
 
     const {content, actions, title, className, type} = props;
     return (
         <div
-            ref={ref}
             className={b(mods, className)}
-            style={getStyles()}
-            onAnimationEnd={onAnimationEnd}
-            {...containerProps}
+            {...statusProps}
+            {...heightProps}
+            {...closeOnTimeoutProps}
         >
             <div className={b('title', {bold: Boolean(content || actions)})}>
                 {renderIcon({type})}
                 {title}
             </div>
-            {getCloseButton()}
+            {isClosable && (
+                <Button
+                    view="flat-secondary"
+                    size="s"
+                    style={{position: 'absolute', top: 10, right: 10}}
+                    onClick={handleClose}
+                >
+                    <Icon data={CrossIcon} />
+                </Button>
+            )}
             {content}
             {renderActions({actions, onClose: handleClose})}
         </div>
