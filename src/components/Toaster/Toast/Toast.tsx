@@ -1,4 +1,4 @@
-import React, {ReactNode, useMemo, useEffect, useRef, useState, useCallback} from 'react';
+import React from 'react';
 import {block} from '../../utils/cn';
 import {Icon} from '../../Icon';
 import {Button} from '../../Button';
@@ -35,7 +35,7 @@ export interface ToastGeneralProps {
     className?: string;
     timeout?: number;
     allowAutoHiding?: boolean;
-    content?: ReactNode;
+    content?: React.ReactNode;
     type?: ToastType;
     isClosable?: boolean;
     isOverride?: boolean;
@@ -50,10 +50,10 @@ interface ToastProps extends ToastGeneralProps, ToastInnerProps {}
 
 enum ToastStatus {
     creating = 'creating',
-    'showing-indents' = 'showing-indents',
-    'showing-height' = 'showing-height',
-    'hiding' = 'hiding',
-    'shown' = 'shown',
+    showingIndents = 'showing-indents',
+    showingHeight = 'showing-height',
+    hiding = 'hiding',
+    shown = 'shown',
 }
 
 type ToastStyles = {
@@ -61,68 +61,99 @@ type ToastStyles = {
     position?: 'relative';
 };
 
-export function Toast(props: ToastProps) {
-    const [status, setStatus] = useState<ToastStatus>(ToastStatus.creating);
-    const [height, setHeight] = useState<number | undefined>(undefined);
-    const [timerId, setTimerId] = useState<ReturnType<typeof setTimeout> | undefined>(undefined);
+function useTimer({
+    remove,
+    ref,
+    timeout,
+}: {
+    remove: VoidFunction;
+    ref: React.RefObject<HTMLDivElement>;
+    timeout?: number;
+}): [VoidFunction, VoidFunction] {
+    const timerId = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-    const {allowAutoHiding = true, isClosable = true, isOverride = false} = props;
-
-    const ref = useRef<HTMLDivElement>(null);
-
-    const timeout = useMemo(() => {
-        const {timeout} = props;
-
-        if (!allowAutoHiding) {
-            return undefined;
+    const setTimer = React.useCallback(() => {
+        if (!timeout) {
+            return;
         }
 
-        return timeout || DEFAULT_TIMEOUT;
-    }, [props.timeout, allowAutoHiding]);
+        timerId.current = setTimeout(async () => {
+            if (ref.current) {
+                remove();
+            }
+        }, timeout);
+    }, [timeout, remove, ref]);
 
-    useEffect(() => {
-        setTimer();
-        setHeight(getToastHeight());
-        setStatus(ToastStatus['showing-indents']);
+    const clearTimer = React.useCallback(() => {
+        if (timerId.current) {
+            clearTimeout(timerId.current);
+            timerId.current = undefined;
+        }
     }, []);
 
-    useEffect(() => {
+    React.useEffect(() => {
+        setTimer();
+        return () => {
+            clearTimer();
+        };
+    }, [setTimer, clearTimer]);
+
+    return [setTimer, clearTimer];
+}
+
+function useHeight({ref, isOverride}: any) {
+    const [height, setHeight] = React.useState<number | undefined>(undefined);
+
+    const getToastHeight = React.useCallback(() => {
+        return ref.current?.offsetHeight;
+    }, [ref]);
+
+    React.useEffect(() => {
+        setHeight(getToastHeight());
+    }, [getToastHeight]);
+
+    React.useEffect(() => {
         if (isOverride) {
             setHeight(getToastHeight());
         }
+    }, [isOverride, getToastHeight]);
 
-        if (status === ToastStatus['showing-indents']) {
-            // setTimeout is needed to animation properly work
-            setTimeout(() => {
-                setStatus(ToastStatus['showing-height']);
-            }, 0);
+    return height;
+}
+
+export function Toast(props: ToastProps) {
+    const [status, setStatus] = React.useState<ToastStatus>(ToastStatus.creating);
+
+    React.useEffect(() => {
+        setStatus(ToastStatus.showingIndents);
+    }, []);
+
+    React.useEffect(() => {
+        if (status === ToastStatus.showingIndents) {
+            setStatus(ToastStatus.showingHeight);
         }
-    }, [isOverride, status]);
-
-    const remove = () => {
-        setStatus(ToastStatus.hiding);
-    };
-
-    const getAnimationEndHandler = useCallback(() => {
-        if (status === ToastStatus['showing-height']) {
-            return onFadeInAnimationEnd;
-        }
-
-        if (status === ToastStatus.hiding) {
-            return onFadeOutAnimationEnd;
-        }
-
-        return undefined;
     }, [status]);
 
-    const getToastHeight = () => {
-        return ref.current?.offsetHeight;
-    };
+    const ref = React.useRef<HTMLDivElement>(null);
 
-    const styles = useMemo(() => {
+    const {allowAutoHiding = true, isClosable = true, isOverride = false} = props;
+
+    const remove = React.useCallback(() => {
+        setStatus(ToastStatus.hiding);
+    }, []);
+
+    const height = useHeight({ref, isOverride});
+
+    const [setTimer, clearTimer] = useTimer({
+        remove,
+        ref,
+        timeout: allowAutoHiding ? props.timeout || DEFAULT_TIMEOUT : undefined,
+    });
+
+    const getStyles = () => {
         const styles: ToastStyles = {};
 
-        if (height && status !== ToastStatus['showing-indents'] && status !== ToastStatus.shown) {
+        if (height && status !== ToastStatus.showingIndents && status !== ToastStatus.shown) {
             styles.height = height;
         }
 
@@ -131,17 +162,13 @@ export function Toast(props: ToastProps) {
         }
 
         return styles;
-    }, [height, status]);
+    };
 
-    const mods = useMemo(() => {
-        return {
-            appearing:
-                status === ToastStatus['showing-indents'] ||
-                status === ToastStatus['showing-height'],
-            'show-animation': status === ToastStatus['showing-height'],
-            'hide-animation': status === ToastStatus.hiding,
-        };
-    }, [status]);
+    const mods = {
+        appearing: status === ToastStatus.showingIndents || status === ToastStatus.showingHeight,
+        'show-animation': status === ToastStatus.showingHeight,
+        'hide-animation': status === ToastStatus.hiding,
+    };
 
     const getTitleIcon = () => {
         const {type} = props;
@@ -194,27 +221,6 @@ export function Toast(props: ToastProps) {
         });
     };
 
-    const setTimer = () => {
-        if (!timeout) {
-            return;
-        }
-
-        setTimerId(
-            setTimeout(async () => {
-                if (ref.current) {
-                    remove();
-                }
-            }, timeout),
-        );
-    };
-
-    const clearTimer = () => {
-        if (timerId) {
-            clearTimeout(timerId);
-            setTimerId(undefined);
-        }
-    };
-
     const onFadeInAnimationEnd = (e: {animationName: string}) => {
         if (e.animationName === FADE_IN_LAST_ANIMATION_NAME) {
             setStatus(ToastStatus.shown);
@@ -228,10 +234,20 @@ export function Toast(props: ToastProps) {
         }
     };
 
-    const onMouseOver = () => {
-        if (timerId) {
-            clearTimer();
+    const getAnimationEndHandler = () => {
+        if (status === ToastStatus.showingHeight) {
+            return onFadeInAnimationEnd;
         }
+
+        if (status === ToastStatus.hiding) {
+            return onFadeOutAnimationEnd;
+        }
+
+        return undefined;
+    };
+
+    const onMouseOver = () => {
+        clearTimer();
     };
 
     const onMouseLeave = () => {
@@ -243,7 +259,7 @@ export function Toast(props: ToastProps) {
         <div
             ref={ref}
             className={b(mods, className)}
-            style={styles}
+            style={getStyles()}
             onAnimationEnd={getAnimationEndHandler()}
             onMouseOver={onMouseOver}
             onMouseLeave={onMouseLeave}
