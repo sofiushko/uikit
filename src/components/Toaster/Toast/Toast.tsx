@@ -56,11 +56,6 @@ enum ToastStatus {
     shown = 'shown',
 }
 
-type ToastStyles = {
-    height?: number;
-    position?: 'relative';
-};
-
 interface UseCloseOnTimeoutProps {
     onClose: VoidFunction;
     timeout?: number;
@@ -104,16 +99,16 @@ function useCloseOnTimeout({onClose, timeout}: UseCloseOnTimeoutProps) {
     return {onMouseOver, onMouseLeave};
 }
 
-interface UseHeightProps {
+interface UseToastHeightProps {
     isOverride: boolean;
     status: ToastStatus;
 }
 
-function useToastHeight({isOverride, status}: UseHeightProps) {
+function useToastHeight({isOverride, status}: UseToastHeightProps) {
     const [height, setHeight] = React.useState<number | undefined>(undefined);
 
     const ref = React.useRef<HTMLDivElement>(null);
-    const style: ToastStyles = {};
+
     const getToastHeight = React.useCallback(() => {
         return ref.current?.offsetHeight;
     }, [ref]);
@@ -126,8 +121,9 @@ function useToastHeight({isOverride, status}: UseHeightProps) {
         if (isOverride) {
             setHeight(getToastHeight());
         }
-    }, [isOverride, getToastHeight]);
+    });
 
+    const style: React.CSSProperties = {};
     if (height && status !== ToastStatus.showingIndents && status !== ToastStatus.shown) {
         style.height = height;
     }
