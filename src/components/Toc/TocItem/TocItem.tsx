@@ -13,19 +13,22 @@ const b = block('toc-item');
 export interface TocItemProps extends TocItemType {
     childItem?: boolean;
     active?: boolean;
-    onClick?: (value: string) => void;
+    onClick?: (value: string, event?: React.MouseEvent) => void;
 }
 
 export const TocItem = (props: TocItemProps) => {
     const {active = false, childItem = false, content, href, value, onClick} = props;
 
-    const handleClick = React.useCallback(() => {
-        if (value === undefined || !onClick) {
-            return;
-        }
+    const handleClick = React.useCallback(
+        (event: React.MouseEvent) => {
+            if (value === undefined || !onClick) {
+                return;
+            }
 
-        onClick(value);
-    }, [onClick, value]);
+            onClick(value, event);
+        },
+        [onClick, value],
+    );
 
     const {onKeyDown} = useActionHandlers(handleClick);
 

@@ -14,7 +14,7 @@ export interface TocProps extends QAProps {
     className?: string;
     items: TocItemType[];
     value?: string;
-    onUpdate?: (value: string) => void;
+    onUpdate?: (value: string, event?: React.MouseEvent) => void;
 }
 
 export const Toc = React.forwardRef<HTMLElement, TocProps>(function Toc(props, ref) {
@@ -32,7 +32,7 @@ export const Toc = React.forwardRef<HTMLElement, TocProps>(function Toc(props, r
                             active={activeValue === value}
                             onClick={onUpdate}
                         />
-                        {childrenItems?.length && (
+                        {childrenItems && childrenItems.length > 0 && (
                             <ul className={b('subsections')}>
                                 {childrenItems?.map(
                                     ({

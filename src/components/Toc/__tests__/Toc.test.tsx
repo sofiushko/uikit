@@ -58,7 +58,7 @@ describe('Toc', () => {
         const nextItem = screen.getByText(nextTitle);
         await user.click(nextItem);
 
-        expect(onUpdateFn).toBeCalledWith(nextValue);
+        expect(onUpdateFn).toHaveBeenCalledWith(nextValue, expect.objectContaining({}));
     });
 
     test('calls onUpdate with correct item with link', async () => {
@@ -71,7 +71,7 @@ describe('Toc', () => {
         const nextItem = screen.getByText(nextTitle);
         await user.click(nextItem);
 
-        expect(onUpdateFn).toBeCalledWith(nextValue);
+        expect(onUpdateFn).toBeCalledWith(nextValue, expect.objectContaining({}));
     });
 
     test('accessible for keyboard', async () => {
@@ -86,7 +86,7 @@ describe('Toc', () => {
         await user.tab();
         await user.keyboard('{Enter}');
 
-        expect(onUpdateFn).toBeCalledWith(secondValue);
+        expect(onUpdateFn).toHaveBeenCalledWith(secondValue, expect.objectContaining({}));
     });
 
     test('accessible for keyboard with links', async () => {
@@ -101,7 +101,7 @@ describe('Toc', () => {
         await user.tab();
         await user.keyboard('{Enter}');
 
-        expect(onUpdateFn).toBeCalledWith(secondValue);
+        expect(onUpdateFn).toHaveBeenCalledWith(secondValue, expect.objectContaining({}));
     });
 
     test('add className', () => {
@@ -148,6 +148,6 @@ describe('Toc', () => {
 
         const currentItem = screen.getByRole('listitem', {current: true});
 
-        expect(currentItem.textContent).toContain(content);
+        expect(currentItem.textContent).toBe(content);
     });
 });
