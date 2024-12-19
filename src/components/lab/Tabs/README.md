@@ -174,7 +174,7 @@ LANDING_BLOCK-->
 
 ## Tabs.Item
 
-Used for render tabs item.f
+Used for render tabs item.
 
 ### Icon
 
