@@ -2,7 +2,7 @@ import React from 'react';
 
 import userEvent from '@testing-library/user-event';
 
-import {render, screen} from '../../../../test-utils/utils';
+import {render, screen} from '../../../../../test-utils/utils';
 import {Tabs, TabsDirection} from '../Tabs';
 import type {TabsItemProps, TabsSize} from '../Tabs';
 
@@ -64,6 +64,9 @@ test('should not select tab if allow not selected', () => {
     render(<Tabs items={[tab1, tab2]} allowNotSelected />);
     const tabComponent1 = screen.getByTitle(tabTitle1);
     const tabComponent2 = screen.getByTitle(tabTitle2);
+
+    console.log('!!!!!! tabComponent1', tabComponent1);
+    console.log('!!!!!! tabComponent2', tabComponent2);
 
     expect(tabComponent1).not.toHaveClass('g-tabs__item_active');
     expect(tabComponent1).toHaveAttribute('aria-selected', 'false');
