@@ -10,14 +10,8 @@ import {TabProvider, TabList, Tab, TabPanel} from '@gravity-ui/uikit';
 
 Tabs components is used to explore, organize content and switch between different views.
 
-### Components
-
-- [TabProvider](#tab-provider)
-- [TabList](#tab-list)
-- [Tab](#tab)
-- [TabPanel](#tab-panel)
-
 <!--LANDING_BLOCK
+
 <ExampleBlock
     code={`
 <TabProvider value={activeTab}>
@@ -47,6 +41,7 @@ Tabs components is used to explore, organize content and switch between differen
         </div>
     </UIKit.TabProvider>
 </ExampleBlock>
+
 LANDING_BLOCK-->
 
 <!--GITHUB_BLOCK-->
@@ -55,21 +50,35 @@ LANDING_BLOCK-->
 const [activeTab, setActiveTab] = React.useState('second');
 
 return (
-    <TabProvider value={activeTab}>
-        <TabList onUpdate={setActiveTab}>
-            <Tab value="first" aria-controls="panel-first" id="tab-first">First Tab</Tab>
-            <Tab value="second" aria-controls="panel-second" id="tab-second">Active Tab</Tab>
-            <Tab value="third" aria-controls="panel-third" id="tab-third" disabled>Disabled Tab</Tab>
-        </TabList>
-        <div>
-            <TabPanel value="first">First Panel</TabPanel>
-            <TabPanel value="second">Second Panel</TabPanel>
-            <TabPanel value="third">Third Panel</TabPanel>
-        </div>
-    </TabProvider>
+  <TabProvider value={activeTab}>
+    <TabList onUpdate={setActiveTab}>
+      <Tab value="first" aria-controls="panel-first" id="tab-first">
+        First Tab
+      </Tab>
+      <Tab value="second" aria-controls="panel-second" id="tab-second">
+        Active Tab
+      </Tab>
+      <Tab value="third" aria-controls="panel-third" id="tab-third" disabled>
+        Disabled Tab
+      </Tab>
+    </TabList>
+    <div>
+      <TabPanel value="first">First Panel</TabPanel>
+      <TabPanel value="second">Second Panel</TabPanel>
+      <TabPanel value="third">Third Panel</TabPanel>
+    </div>
+  </TabProvider>
 );
 ```
+
 <!--/GITHUB_BLOCK-->
+
+### Components
+
+- [TabProvider](#tabprovider)
+- [TabList](#tablist)
+- [Tab](#tab)
+- [TabPanel](#tabpanel)
 
 ## TabProvider
 
@@ -77,14 +86,14 @@ A component that provides the tab selection functionality
 
 ### Properties
 
-| Name     | Description                                              |          Type          | Default |
-| :------- | :------------------------------------------------------- | :--------------------: | :-----: |
-| children | List of tabs and tab panels, probably with some wrappers |  `React.ReactNode`  |        |
-| value    | Active tab value                                         | `string \| undefined` |        |
+| Name     | Description                                              |         Type          | Default |
+| :------- | :------------------------------------------------------- | :-------------------: | :-----: |
+| children | List of tabs and tab panels, probably with some wrappers |   `React.ReactNode`   |         |
+| value    | Active tab value                                         | `string \| undefined` |         |
 
 ## TabList
 
-Element that serves as the container for a set of `tabs`
+Component that serves as the container for a set of `tabs`
 
 ### Size
 
@@ -135,16 +144,10 @@ LANDING_BLOCK-->
     <Tab value="first">M Size first</Tab>
     <Tab value="second">M Size second</Tab>
 </TabList>
-```
-
-```tsx
 <TabList value="second" size="l">
     <Tab value="first">L Size first</Tab>
     <Tab value="second">L Size second</Tab>
 </TabList>
-```
-
-```tsx
 <TabList value="second" size="xl">
     <Tab value="first">XL Size first</Tab>
     <Tab value="second">v Size second</Tab>
@@ -155,15 +158,15 @@ LANDING_BLOCK-->
 
 ### Properties
 
-|      Name      | Description                               |                Type                |  Default  |
-| :-------------: | :---------------------------------------- | :--------------------------------: | :--------: |
-|      value      | Active tab value                          |       `string \| undefined`       |            |
-|    children    | List of tabs, probably with some wrappers |        `React.ReactNode`        |            |
-|    onUpdate    | Update tab handler                        | `onUpdate?(value: string): void` |            |
-|    className    | CSS-class of element                      |       `string \| undefined`       |            |
-|      size      | Element size                              |        `'m' \| 'l' \| 'xl'`        |  `'m'`  |
+|      Name       | Description                               |               Type               | Default  |
+| :-------------: | :---------------------------------------- | :------------------------------: | :------: |
+|      value      | Active tab value                          |      `string \| undefined`       |          |
+|    children     | List of tabs, probably with some wrappers |        `React.ReactNode`         |          |
+|    onUpdate     | Update tab handler                        | `onUpdate?(value: string): void` |          |
+|    className    | CSS-class of element                      |      `string \| undefined`       |          |
+|      size       | Element size                              |       `'m' \| 'l' \| 'xl'`       |  `'m'`   |
 | contentOverflow | Controls component overflow behavior      |             `'wrap'`             | `'wrap'` |
-|       qa       | HTML `data-qa` attribute, used in tests |             `string`             |            |
+|       qa        | HTML `data-qa` attribute, used in tests   |             `string`             |          |
 
 ## Tab
 
@@ -202,8 +205,10 @@ LANDING_BLOCK-->
 
 ```tsx
 <TabList value="first">
-    <Tab value="first" icon={<Icon size={16} data={GearIcon} />}>Tab with icon</Tab>
-    <Tab value="second">Tab without icon</Tab>
+  <Tab value="first" icon={<Icon size={16} data={GearIcon} />}>
+    Tab with icon
+  </Tab>
+  <Tab value="second">Tab without icon</Tab>
 </TabList>
 ```
 
@@ -233,8 +238,10 @@ LANDING_BLOCK-->
 
 ```tsx
 <TabList value="first">
-    <Tab value="first" >First Tab</Tab>
-    <Tab value="second" disabled>Disabled Tab</Tab>
+  <Tab value="first">First Tab</Tab>
+  <Tab value="second" disabled>
+    Disabled Tab
+  </Tab>
 </TabList>
 ```
 
@@ -264,8 +271,12 @@ LANDING_BLOCK-->
 
 ```tsx
 <TabList value="first">
-    <Tab value="first" counter={13}>First Tab</Tab>
-    <Tab value="second" counter={3}>Second Tab</Tab>
+  <Tab value="first" counter={13}>
+    First Tab
+  </Tab>
+  <Tab value="second" counter={3}>
+    Second Tab
+  </Tab>
 </TabList>
 ```
 
@@ -295,8 +306,12 @@ LANDING_BLOCK-->
 
 ```tsx
 <TabList value="first">
-    <Tab value="first" label={{content: 'Label 1'}}>First Tab</Tab>
-    <Tab value="second" label={{content: 'Label 2'}}>Second Tab</Tab>
+  <Tab value="first" label={{content: 'Label 1'}}>
+    First Tab
+  </Tab>
+  <Tab value="second" label={{content: 'Label 2'}}>
+    Second Tab
+  </Tab>
 </TabList>
 ```
 
@@ -304,20 +319,20 @@ LANDING_BLOCK-->
 
 ### Properties
 
-| Name          | Description                                                      |          Type          | Default |
-| :------------ | ---------------------------------------------------------------- | :--------------------: | :-----: |
-| value         | Tab value                                                        |       `string`       |        |
-| title         | Tab title                                                        | `string \| undefined` |        |
-| icon          | Icon displayed at the start                                      |  `React.ReactNode`  |        |
-| counter       | Content displayed at the end                                     |  `number \| string`  |        |
-| href          | A URL to link to.                                                | `string \| undefined` |        |
-| label         | `<Label>` displayed at the end                                 |  `React.ReactNode`  |        |
-| disabled      | Inactive state                                                   | `boolean\| undefined` |        |
-| children      | Tab's content                                                    |  `React.ReactNode`  |        |
-| id            | This prop is used to help implement the accessibility logic      | `string\| undefined` |        |
-| aria-controls | Indicates that tab controls the interaction with another element | `string\| undefined` |        |
-| aria-label    | An accessibility label for this item                             |       `string`       |        |
-| qa            | HTML `data-qa` attribute, used in tests                        |       `string`       |        |
+| Name          | Description                                                      |         Type          | Default |
+| :------------ | ---------------------------------------------------------------- | :-------------------: | :-----: |
+| value         | Tab value                                                        |       `string`        |         |
+| title         | Tab title                                                        | `string \| undefined` |         |
+| icon          | Icon displayed at the start                                      |   `React.ReactNode`   |         |
+| counter       | Content displayed at the end                                     |  `number \| string`   |         |
+| href          | A URL to link to.                                                | `string \| undefined` |         |
+| label         | `<Label>` displayed at the end                                   |   `React.ReactNode`   |         |
+| disabled      | Inactive state                                                   | `boolean\| undefined` |         |
+| children      | Tab's content                                                    |   `React.ReactNode`   |         |
+| id            | This prop is used to help implement the accessibility logic      | `string\| undefined`  |         |
+| aria-controls | Indicates that tab controls the interaction with another element | `string\| undefined`  |         |
+| aria-label    | An accessibility label for this item                             |       `string`        |         |
+| qa            | HTML `data-qa` attribute, used in tests                          |       `string`        |         |
 
 ## TabPanel
 
@@ -325,18 +340,18 @@ Is a container element for content associated with a tab
 
 ### Properties
 
-| Name            | Description                                                           |          Type          | Default |
-| :-------------- | :-------------------------------------------------------------------- | :--------------------: | :-----: |
-| children        | Content of panel                                                      |  `React.ReactNode`  |        |
-| value           | Active tab value                                                      | `string \| undefined` |        |
-| id              | This prop is used to help implement the accessibility logic           | `string\| undefined` |        |
-| aria-labelledby | Identifies the element (or elements) that labels the current element. |       `string`       |        |
-| qa              | HTML `data-qa` attribute, used in tests                             |       `string`       |        |
+| Name            | Description                                                           |         Type          | Default |
+| :-------------- | :-------------------------------------------------------------------- | :-------------------: | :-----: |
+| children        | Content of panel                                                      |   `React.ReactNode`   |         |
+| value           | Active tab value                                                      | `string \| undefined` |         |
+| id              | This prop is used to help implement the accessibility logic           | `string\| undefined`  |         |
+| aria-labelledby | Identifies the element (or elements) that labels the current element. |       `string`        |         |
+| qa              | HTML `data-qa` attribute, used in tests                               |       `string`        |         |
 
 ## CSS API
 
-| Name                               | Description                |
-| :--------------------------------- | :------------------------- |
+| Name                             | Description                |
+| :------------------------------- | :------------------------- |
 | `--g-tabs-border-width`          | Tabs border width          |
 | `--g-tabs-item-height`           | Tabs item height           |
 | `--g-tabs-item-border-width`     | Tabs item border width     |
