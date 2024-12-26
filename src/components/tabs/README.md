@@ -197,7 +197,7 @@ Used if you need to display an icon for a tab item.
             Tab with icon
         </UIKit.Tab>
         <UIKit.Tab value="second">Tab without icon</UIKit.Tab>
-    </UIKit.Tabs>
+    </UIKit.TabList>
 </ExampleBlock>
 LANDING_BLOCK-->
 
@@ -230,7 +230,7 @@ Tab item has disabled flag.
     <UIKit.TabList value="first">
         <UIKit.Tab value="first">First Tab</UIKit.Tab>
         <UIKit.Tab disabled value="second">Disabled Tab</UIKit.Tab>
-    </UIKit.Tabs>
+    </UIKit.TabList>
 </ExampleBlock>
 LANDING_BLOCK-->
 
@@ -263,7 +263,7 @@ Used if you need to display a number for a tabs item.
     <UIKit.TabList value="first">
         <UIKit.Tab value="first" counter={13}>First Tab</UIKit.Tab>
         <UIKit.Tab value="second" counter={3}>Second Tab</UIKit.Tab>
-    </UIKit.Tabs>
+    </UIKit.TabList>
 </ExampleBlock>
 LANDING_BLOCK-->
 
@@ -298,7 +298,7 @@ Used if you need to display a label for a tabs item.
     <UIKit.TabList value="first">
         <UIKit.Tab value="first" label={{content: 'Label 1'}}>First Tab</UIKit.Tab>
         <UIKit.Tab value="second" label={{content: 'Label 2'}}>Second Tab</UIKit.Tab>
-    </UIKit.Tabs>
+    </UIKit.TabList>
 </ExampleBlock>
 LANDING_BLOCK-->
 
